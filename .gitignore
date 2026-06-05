@@ -1,14 +1,86 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+lib-cov
+coverage
+*.lcov
+.nyc_output
+
+# Build tools
+.grunt
+bower_components
+.lock-wscript
+build/Release
+
 # Dependencies
 node_modules/
+jspm_packages/
+web_modules/
 
-# Build output
+# TypeScript cache
+*.tsbuildinfo
+
+# npm / yarn
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# dotenv
+.env
+.env.*
+!.env.example
+
+# Cache / build output
+.cache
+.parcel-cache
 build/
 dist/
-
-# Environment & secrets
-.env
-.env.local
-.env.*.local
+.next
+out
+.nuxt
+.output
+.cache/
+.vuepress/dist
+.temp
+.svelte-kit/
+**/.vitepress/dist
+**/.vitepress/cache
+.docusaurus
+.serverless/
+.fusebox/
+.dynamodb/
+.firebase/
+.tern-port
+.vscode-test
+.pnpm-store
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
 
 # Local Claude Code settings
 .claude/settings.local.json
