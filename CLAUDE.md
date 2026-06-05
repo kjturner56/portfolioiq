@@ -45,7 +45,7 @@ src/
 React 18, Recharts. No new npm packages without asking first.
 
 ## Key Format
-PIQ-XXXX-XXXX-XXXX-XXXX (HMAC-SHA256 signed, base64url encoded)
+PIQ-XXXX-XXXX-XXXX-XXXX-XXXX (HMAC-SHA256 signed, base64url encoded)
 SECRET_KEY in .env for Phase 1a, Electron main process for Phase 1b
 
 ## Scoring Weights

@@ -85,6 +85,9 @@ vite.config.ts.timestamp-*
 # Local Claude Code settings
 .claude/settings.local.json
 
+# Visual companion brainstorm sessions
+.superpowers/
+
 # Playwright / screenshot artifacts
 .playwright-mcp/
 screenshots/
