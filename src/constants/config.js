@@ -10,4 +10,9 @@ export const CONFIG = {
     SUCCESS: 'success',
     ERROR:   'error',
   },
+  CONNECTION_STATUS: {
+    ONLINE:  'online',
+    OFFLINE: 'offline',
+    UNKNOWN: 'unknown',
+  },
 };

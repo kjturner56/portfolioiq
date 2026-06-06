@@ -34,6 +34,22 @@ describe('appReducer', () => {
     expect(next).toEqual(initialState);
   });
 
+  test('initialState.connectionStatus is UNKNOWN', () => {
+    expect(initialState.connectionStatus).toBe('unknown');
+  });
+
+  test('SET_CONNECTION_STATUS updates connectionStatus', () => {
+    const next = appReducer(initialState, { type: 'SET_CONNECTION_STATUS', payload: 'offline' });
+    expect(next.connectionStatus).toBe('offline');
+  });
+
+  test('SET_CONNECTION_STATUS to online preserves other state', () => {
+    const withKey = appReducer(initialState, { type: 'SET_KEY', payload: { valid: true } });
+    const next = appReducer(withKey, { type: 'SET_CONNECTION_STATUS', payload: 'online' });
+    expect(next.connectionStatus).toBe('online');
+    expect(next.engagementKey).toEqual({ valid: true });
+  });
+
   test('initialState has expected shape', () => {
     expect(initialState.currentScreen).toBe('SESSION_START');
     expect(initialState.engagementKey).toBeNull();

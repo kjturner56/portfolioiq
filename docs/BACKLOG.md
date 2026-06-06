@@ -10,6 +10,7 @@ Review before each new session to see if priorities have changed.
 - [ ] In-app feedback button — captures current screen and sanitized state, emails Ken
 - [ ] Data collection Excel template — standard template Jan gives clients before engagement
 - [ ] Pre-engagement checklist — what data Jan should request and from whom
+- [ ] Offline mode and connection resilience — detect network unavailability in ipcBridge.callClaude(), add CONNECTION_STATUS indicator, ensure all non-AI screens work fully offline (GitHub Issue #7)
 
 ## Medium Priority (Phase 1b)
 - [ ] AES-256 encryption for .portfolioiq files

@@ -33,7 +33,8 @@ export const initialState = {
     confidenceThreshold:  0.75,
     showAiReasoning:      true,
   },
-  validationStates: {},
+  validationStates:  {},
+  connectionStatus:  CONFIG.CONNECTION_STATUS.UNKNOWN,
 };
 
 export function appReducer(state, action) {
@@ -100,6 +101,8 @@ export function appReducer(state, action) {
         },
       };
     }
+    case 'SET_CONNECTION_STATUS':
+      return { ...state, connectionStatus: action.payload };
     default:
       return state;
   }
