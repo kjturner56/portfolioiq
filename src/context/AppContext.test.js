@@ -77,6 +77,33 @@ describe('appReducer', () => {
     expect(next.aiCallLog[0]).toEqual(entry);
   });
 
+  test('initialState has analystConfig with correct defaults', () => {
+    expect(initialState.analystConfig.analystName).toBe('');
+    expect(initialState.analystConfig.currency).toBe('USD');
+    expect(initialState.analystConfig.aiModel).toBe('claude-sonnet-4-6');
+    expect(initialState.analystConfig.confidenceThreshold).toBe(0.75);
+    expect(initialState.analystConfig.showAiReasoning).toBe(true);
+    expect(initialState.analystConfig.autoSaveInterval).toBe(15);
+  });
+
+  test('SET_ANALYST_CONFIG replaces analystConfig entirely', () => {
+    const config = { analystName: 'Ken Turner', firmName: 'Telority', currency: 'GBP',
+      dateFormat: 'DD/MM/YYYY', autoSaveInterval: 30, aiModel: 'claude-sonnet-4-6',
+      confidenceThreshold: 0.80, showAiReasoning: false };
+    const next = appReducer(initialState, { type: 'SET_ANALYST_CONFIG', payload: config });
+    expect(next.analystConfig).toEqual(config);
+  });
+
+  test('UPDATE_ANALYST_CONFIG merges partial updates', () => {
+    const next = appReducer(initialState, {
+      type: 'UPDATE_ANALYST_CONFIG',
+      payload: { analystName: 'Ken Turner', currency: 'EUR' },
+    });
+    expect(next.analystConfig.analystName).toBe('Ken Turner');
+    expect(next.analystConfig.currency).toBe('EUR');
+    expect(next.analystConfig.aiModel).toBe('claude-sonnet-4-6');
+  });
+
   test('ADD_AI_CALL appends without mutating prior entries', () => {
     const first = { appId: 'app-001', appName: 'SAP ERP' };
     const second = { appId: 'app-002', appName: 'Salesforce' };

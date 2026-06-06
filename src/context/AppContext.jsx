@@ -9,6 +9,16 @@ export const initialState = {
   isDemoMode:     false,
   currentScreen:  'SESSION_START',
   aiCallLog:      [],
+  analystConfig: {
+    analystName:          '',
+    firmName:             '',
+    currency:             'USD',
+    dateFormat:           'MM/DD/YYYY',
+    autoSaveInterval:     15,
+    aiModel:              'claude-sonnet-4-6',
+    confidenceThreshold:  0.75,
+    showAiReasoning:      true,
+  },
 };
 
 export function appReducer(state, action) {
@@ -23,6 +33,10 @@ export function appReducer(state, action) {
       return { ...state, engagement: action.payload, isDemoMode: false };
     case 'ADD_AI_CALL':
       return { ...state, aiCallLog: [...state.aiCallLog, action.payload] };
+    case 'SET_ANALYST_CONFIG':
+      return { ...state, analystConfig: action.payload };
+    case 'UPDATE_ANALYST_CONFIG':
+      return { ...state, analystConfig: { ...state.analystConfig, ...action.payload } };
     default:
       return state;
   }
