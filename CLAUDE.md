@@ -51,6 +51,12 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - When mapping CSV columns, only send column headers and up to 3 sample values per column to the Claude API — never send full column data
 - The schema mapper prompt must never include more than 500 tokens of sample data total
 
+### AI Scoring
+- buildScoringPrompt() must request a structured scoring_breakdown object — never free text scores
+- buildScoringPrompt() must request structured uncertainty flags — data_conflicts, unusual_vendor, low_data_quality, low_confidence_reason, requires_human_review
+- Claude API responses must be parsed for both scoring_breakdown and uncertainty_flags before being stored in the engagement file
+- Apps with requires_human_review: true must be visually flagged in the HITL validation queue
+
 ### Engagement File Export
 - When Jan exports a .portfolioiq file, display a one-time confirmation: 'This file contains client portfolio data. Store and share it securely.'
 - Log the export event to aiCallLog with action: 'ENGAGEMENT_EXPORT'

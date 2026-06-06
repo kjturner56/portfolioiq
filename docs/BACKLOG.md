@@ -11,8 +11,12 @@ Review before each new session to see if priorities have changed.
 - [ ] Data collection Excel template — standard template Jan gives clients before engagement
 - [ ] Pre-engagement checklist — what data Jan should request and from whom
 - [ ] Offline mode and connection resilience — detect network unavailability in ipcBridge.callClaude(), add CONNECTION_STATUS indicator, ensure all non-AI screens work fully offline (GitHub Issue #7)
+- [ ] Scoring breakdown per application — structured scoring_breakdown object required from Claude in Session 2; cannot be retrofitted later (GitHub Issue #8)
+- [ ] AI uncertainty flags — structured uncertainty_flags required from Claude in Session 2; requires_human_review drives HITL flagging (GitHub Issue #9)
 
 ## Medium Priority (Phase 1b)
+- [ ] Dependency mapping between applications — directed app-A depends-on app-B; retirement recommendations flag dependency risks; Session 4 data model, Session 5 display (GitHub Issue #10)
+- [ ] Business capability mapping — capability_tags per app (HR, Finance, Operations, Sales, IT, Legal); enables over-investment analysis; Session 3 data entry, Session 5 heat map (GitHub Issue #11)
 - [ ] AES-256 encryption for .portfolioiq files
 - [ ] Full HMAC key validation in Electron main process
 - [ ] issued_to email check against Electron credential store
