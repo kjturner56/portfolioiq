@@ -21,6 +21,14 @@ const ipcBridge = {
     return { data: { path: filename }, error: null };
   },
 
+  // PERMITTED FIELDS — only these may be included in Claude API prompts:
+  // name, vendor, lifecycle_stage, support_status,
+  // incident_count_12mo, annual_cost, active_user_count,
+  // ai_disposition, technical_debt_score, business_value_score
+  //
+  // NEVER SEND: free text fields, employee names, email addresses,
+  // custom notes, or any field not in the above list.
+  // Session 2 enforces this in buildScoringPrompt().
   async callClaude(_prompt, _options) {
     return { data: null, error: 'Claude API not yet wired — implemented in Session 2.' };
   },
