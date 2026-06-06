@@ -11,6 +11,8 @@ export const DEMO_ENGAGEMENT = {
     schema_version:      'v2.3',
     engagement_key_id:   'demo',
     key_expires_at:      '2099-12-31',
+    // Phase 1b Electron flips this to true with AES-256.
+    encrypted:           false,
   },
   applications: [
     {
