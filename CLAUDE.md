@@ -115,6 +115,14 @@ SECRET_KEY in .env for Phase 1a, Electron main process for Phase 1b
 ## Scoring Weights
 Authoritative weights in pseudocode v2.3. Do not invent weights.
 
+## Product Management
+- Check docs/SESSION_PLANNING.md at the start of every session
+- Check open GitHub Issues before writing any code
+- Add an entry to docs/DECISIONS.md for every significant decision not covered by the pseudocode
+- Add ideas that are out of scope to docs/BACKLOG.md instead of implementing them
+- Close GitHub Issues with commit references when resolved
+- Never implement a backlog item mid-session without explicit instruction
+
 ## When Uncertain
 Stop and ask before writing code.
 
