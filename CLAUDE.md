@@ -80,6 +80,7 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - Every new utility must be a pure function with no React dependencies
 - Every new constant belongs in colors.js or config.js — never defined inline in a component
 - No magic numbers anywhere — every numeric constant gets a named export in config.js
+- Never hardcode analyst names, firm names, or contact information in any component, utility, or constant. All analyst identity references must come from analystConfig.analystName and analystConfig.firmName.
 
 ## Configuration and Validation Rules
 
