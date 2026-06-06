@@ -63,6 +63,18 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - The auto-save confirmation toast must include: 'Saved locally — this file contains client data.'
 - Auto-save events are logged to aiCallLog with action: 'AUTO_SAVE'
 
+## Configuration and Validation Rules
+
+- Scoring weights come from engagementConfig.scoringWeights — never hardcoded in the scorer
+- AI model comes from analystConfig.aiModel — never hardcoded in API calls
+- Every app must be run through validateAppData() before being sent to the Claude API
+- Unscorable apps are never sent to the Claude API — they are flagged with status UNSCORABLE and explanation
+- Partial apps are sent with a reduced field set and the prompt must acknowledge missing fields
+- The dashboard and PDF report must show three groups: Fully Scored, Partially Scored, Unscorable
+- Analyst config is stored in analyst_config.json — never inside the engagement file
+- Scoring weights are never user-configurable from the UI beyond the six approved dimensions
+- The following are never user-configurable: KEY_FORMAT_REGEX, SUPPORTED_VERSIONS, permitted API fields, Gartner disclaimer
+
 ### Resume Engagement Error Handling
 - If .portfolioiq file import fails validation, the error logged must not include file contents
 - Error context may only include: filename, file size, portfolioiq_version found, and error code
