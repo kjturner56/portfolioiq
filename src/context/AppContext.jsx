@@ -33,6 +33,7 @@ export const initialState = {
     confidenceThreshold:  0.75,
     showAiReasoning:      true,
   },
+  validationStates: {},
 };
 
 export function appReducer(state, action) {
@@ -55,6 +56,50 @@ export function appReducer(state, action) {
       return { ...state, engagementConfig: action.payload };
     case 'UPDATE_ENGAGEMENT_CONFIG':
       return { ...state, engagementConfig: { ...state.engagementConfig, ...action.payload } };
+    case 'INITIALIZE_VALIDATIONS': {
+      const { apps, isDemoMode: demo } = action.payload;
+      const validationStates = {};
+      apps.forEach(app => {
+        validationStates[app.id] = {
+          status:           demo ? 'ACCEPTED' : 'PENDING',
+          aiRecommendation: app.ai_disposition ?? '',
+          analystDecision:  demo ? app.ai_disposition ?? '' : '',
+          overrideReason:   null,
+          validatedAt:      demo ? new Date().toISOString() : null,
+          validatedBy:      demo ? 'demo' : '',
+        };
+      });
+      return { ...state, validationStates };
+    }
+    case 'VALIDATE_APP': {
+      const { appId, ...update } = action.payload;
+      return {
+        ...state,
+        validationStates: {
+          ...state.validationStates,
+          [appId]: { ...state.validationStates[appId], ...update },
+        },
+      };
+    }
+    case 'RESET_VALIDATION': {
+      const appId = action.payload;
+      const existing = state.validationStates[appId];
+      if (!existing) return state;
+      return {
+        ...state,
+        validationStates: {
+          ...state.validationStates,
+          [appId]: {
+            ...existing,
+            status:         'PENDING',
+            analystDecision: '',
+            overrideReason:  null,
+            validatedAt:     null,
+            validatedBy:     '',
+          },
+        },
+      };
+    }
     default:
       return state;
   }

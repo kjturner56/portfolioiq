@@ -3140,6 +3140,88 @@ SAAS CONVERSION FLOW (Phase 2):
 
 ---
 
+## HUMAN-IN-THE-LOOP ARCHITECTURE
+
+### Core Principle
+
+Every AI disposition is a RECOMMENDATION, never a DECISION. The AI scores and classifies applications; Jan reviews, validates, and may override each one before the engagement is considered complete. No report is generated — and no engagement file is exported — until every application has been through this review step.
+
+### Five Validation States
+
+```
+PENDING     App has been scored by AI but not yet reviewed by Jan.
+            Blocked from PDF report and export.
+
+ACCEPTED    Jan agrees with the AI recommendation. No override reason required.
+
+OVERRIDDEN  Jan disagrees with the AI recommendation and has provided a different
+            disposition. Override reason is mandatory (minimum 10 characters).
+
+ESCALATED   Jan has flagged this app for discussion before a final decision.
+            Treated as "reviewed" for export purposes — does not block export.
+
+EXCLUDED    App is intentionally excluded from analysis (out of scope, duplicate, etc).
+            Treated as "reviewed" for export purposes — does not block export.
+```
+
+### Override Capture Requirement
+
+When an analyst overrides an AI recommendation:
+- `analystDecision` stores the analyst's chosen disposition
+- `overrideReason` is mandatory — minimum 10 characters — and stored against the record
+- The UI must not allow OVERRIDDEN status to be saved without a non-empty reason
+- Override reason is a permanent audit record — append-only, never editable after save
+
+### Export Lock
+
+```
+isExportAllowed(validationStates):
+  return all apps have status != PENDING
+
+canExport = totalApps > 0 AND pendingCount == 0
+```
+
+Export is locked (.portfolioiq file save and PDF generation) until every app is in one of:
+ACCEPTED, OVERRIDDEN, ESCALATED, or EXCLUDED.
+
+### PDF Report Display When AI and Analyst Disagree
+
+When `status == OVERRIDDEN`:
+- Show both the AI recommendation and the analyst's decision side by side
+- Show the override reason below the disposition row
+- Highlight the row visually to signal the disagreement
+
+### Executive Summary Disclaimer Language
+
+Every PDF report must include the following in the executive summary (verbatim):
+
+> 'All recommendations have been reviewed and validated by [analystName]. This report is
+> advisory only. Client decisions remain the sole responsibility of the client organization.'
+
+`[analystName]` is substituted from `analystConfig.analystName` at render time.
+
+### Demo Mode Exemption
+
+Demo mode apps bypass HITL entirely. When `INITIALIZE_VALIDATIONS` is called with `isDemoMode: true`, all apps are initialized as ACCEPTED with `validatedBy: 'demo'` and a `validatedAt` timestamp. Jan is not required to review demo apps before exploring the dashboard or PDF report.
+
+### Validation Progress Indicator
+
+The dashboard must show a HITL progress indicator at all times once analysis has run:
+```
+X of Y apps validated  [progress bar]
+```
+
+`getValidationProgress(validationStates)` returns:
+```
+{
+  total, pending, accepted, overridden, escalated, excluded,
+  percentComplete,  // (total - pending) / total * 100, rounded
+  canExport         // true only when total > 0 and pending == 0
+}
+```
+
+---
+
 ## CONFIGURATION ARCHITECTURE
 
 ### Analyst Settings

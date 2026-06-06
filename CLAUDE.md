@@ -63,6 +63,24 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - The auto-save confirmation toast must include: 'Saved locally — this file contains client data.'
 - Auto-save events are logged to aiCallLog with action: 'AUTO_SAVE'
 
+## Human-in-the-Loop (HITL) Rules
+
+- Every AI disposition is a RECOMMENDATION, never a DECISION
+- Validation states: PENDING, ACCEPTED, OVERRIDDEN, ESCALATED, EXCLUDED
+- PENDING apps cannot appear in the PDF report — export is locked until 100% of apps are validated
+- Override requires a reason (minimum 10 characters) — non-negotiable
+- PDF report shows AI recommendation AND analyst decision where they differ, with override reason
+- Executive summary must include: 'All recommendations have been reviewed and validated by [analystName]. This report is advisory only. Client decisions remain the sole responsibility of the client organization.'
+- Dashboard must show HITL progress indicator: X of Y apps validated
+- Demo mode apps are pre-validated (status ACCEPTED, validatedBy 'demo') — exempt from HITL requirement
+
+## Coding Rules
+
+- Every new screen component must use only useApp() for state — no prop drilling beyond one level
+- Every new utility must be a pure function with no React dependencies
+- Every new constant belongs in colors.js or config.js — never defined inline in a component
+- No magic numbers anywhere — every numeric constant gets a named export in config.js
+
 ## Configuration and Validation Rules
 
 - Scoring weights come from engagementConfig.scoringWeights — never hardcoded in the scorer

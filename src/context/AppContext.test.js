@@ -151,4 +151,110 @@ describe('appReducer', () => {
     // original s1 log is unchanged
     expect(s1.aiCallLog).toHaveLength(1);
   });
+
+  test('initialState has empty validationStates', () => {
+    expect(initialState.validationStates).toEqual({});
+  });
+
+  describe('INITIALIZE_VALIDATIONS', () => {
+    const apps = [
+      { id: 'app-001', ai_disposition: 'Retain' },
+      { id: 'app-002', ai_disposition: 'Retire' },
+    ];
+
+    test('creates PENDING entries for non-demo mode', () => {
+      const next = appReducer(initialState, {
+        type: 'INITIALIZE_VALIDATIONS',
+        payload: { apps, isDemoMode: false },
+      });
+      expect(next.validationStates['app-001'].status).toBe('PENDING');
+      expect(next.validationStates['app-001'].aiRecommendation).toBe('Retain');
+      expect(next.validationStates['app-001'].analystDecision).toBe('');
+      expect(next.validationStates['app-001'].overrideReason).toBeNull();
+      expect(next.validationStates['app-001'].validatedAt).toBeNull();
+      expect(next.validationStates['app-001'].validatedBy).toBe('');
+    });
+
+    test('creates ACCEPTED entries for demo mode', () => {
+      const next = appReducer(initialState, {
+        type: 'INITIALIZE_VALIDATIONS',
+        payload: { apps, isDemoMode: true },
+      });
+      expect(next.validationStates['app-001'].status).toBe('ACCEPTED');
+      expect(next.validationStates['app-001'].validatedBy).toBe('demo');
+      expect(next.validationStates['app-001'].validatedAt).toBeTruthy();
+    });
+
+    test('populates all apps', () => {
+      const next = appReducer(initialState, {
+        type: 'INITIALIZE_VALIDATIONS',
+        payload: { apps, isDemoMode: false },
+      });
+      expect(Object.keys(next.validationStates)).toHaveLength(2);
+    });
+  });
+
+  describe('VALIDATE_APP', () => {
+    const withTwo = appReducer(initialState, {
+      type: 'INITIALIZE_VALIDATIONS',
+      payload: {
+        apps: [{ id: 'app-001', ai_disposition: 'Retain' }, { id: 'app-002', ai_disposition: 'Retire' }],
+        isDemoMode: false,
+      },
+    });
+
+    test('updates status and analystDecision for a single app', () => {
+      const next = appReducer(withTwo, {
+        type: 'VALIDATE_APP',
+        payload: { appId: 'app-001', status: 'ACCEPTED', analystDecision: 'Retain', validatedBy: 'Ken' },
+      });
+      expect(next.validationStates['app-001'].status).toBe('ACCEPTED');
+      expect(next.validationStates['app-001'].analystDecision).toBe('Retain');
+      expect(next.validationStates['app-002'].status).toBe('PENDING');
+    });
+
+    test('captures overrideReason on OVERRIDDEN', () => {
+      const next = appReducer(withTwo, {
+        type: 'VALIDATE_APP',
+        payload: {
+          appId: 'app-001', status: 'OVERRIDDEN',
+          analystDecision: 'Retire', overrideReason: 'Client strategy change', validatedBy: 'Ken',
+        },
+      });
+      expect(next.validationStates['app-001'].status).toBe('OVERRIDDEN');
+      expect(next.validationStates['app-001'].overrideReason).toBe('Client strategy change');
+    });
+  });
+
+  describe('RESET_VALIDATION', () => {
+    const withValidated = () => {
+      const s1 = appReducer(initialState, {
+        type: 'INITIALIZE_VALIDATIONS',
+        payload: { apps: [{ id: 'app-001', ai_disposition: 'Retain' }], isDemoMode: false },
+      });
+      return appReducer(s1, {
+        type: 'VALIDATE_APP',
+        payload: { appId: 'app-001', status: 'ACCEPTED', analystDecision: 'Retain', validatedBy: 'Ken' },
+      });
+    };
+
+    test('resets status to PENDING and clears decision fields', () => {
+      const next = appReducer(withValidated(), { type: 'RESET_VALIDATION', payload: 'app-001' });
+      expect(next.validationStates['app-001'].status).toBe('PENDING');
+      expect(next.validationStates['app-001'].analystDecision).toBe('');
+      expect(next.validationStates['app-001'].overrideReason).toBeNull();
+      expect(next.validationStates['app-001'].validatedAt).toBeNull();
+    });
+
+    test('preserves aiRecommendation after reset', () => {
+      const next = appReducer(withValidated(), { type: 'RESET_VALIDATION', payload: 'app-001' });
+      expect(next.validationStates['app-001'].aiRecommendation).toBe('Retain');
+    });
+
+    test('returns state unchanged for unknown appId', () => {
+      const state = withValidated();
+      const next = appReducer(state, { type: 'RESET_VALIDATION', payload: 'app-999' });
+      expect(next.validationStates).toEqual(state.validationStates);
+    });
+  });
 });
