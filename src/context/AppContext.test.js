@@ -77,6 +77,42 @@ describe('appReducer', () => {
     expect(next.aiCallLog[0]).toEqual(entry);
   });
 
+  test('initialState has engagementConfig with correct defaults', () => {
+    expect(initialState.engagementConfig.clientName).toBe('');
+    expect(initialState.engagementConfig.currency).toBeNull();
+    expect(initialState.engagementConfig.appLimitWarningThreshold).toBe(0.8);
+    expect(initialState.engagementConfig.includeAiCallLog).toBe(true);
+    expect(initialState.engagementConfig.showCostData).toBe(true);
+    expect(initialState.engagementConfig.scoringWeights.technicalDebt).toBe(0.25);
+    expect(initialState.engagementConfig.scoringWeights.businessValue).toBe(0.25);
+    expect(initialState.engagementConfig.scoringWeights.securityRisk).toBe(0.25);
+    expect(initialState.engagementConfig.scoringWeights.cloudReadiness).toBe(0.25);
+  });
+
+  test('SET_ENGAGEMENT_CONFIG replaces engagementConfig entirely', () => {
+    const config = { clientName: 'Nexus', engagementCode: 'NGS-001', currency: 'USD',
+      appLimitWarningThreshold: 0.9, includeAiCallLog: false, showCostData: true,
+      scoringWeights: { technicalDebt: 0.3, businessValue: 0.3, securityRisk: 0.2, cloudReadiness: 0.2 } };
+    const next = appReducer(initialState, { type: 'SET_ENGAGEMENT_CONFIG', payload: config });
+    expect(next.engagementConfig).toEqual(config);
+  });
+
+  test('UPDATE_ENGAGEMENT_CONFIG merges partial updates', () => {
+    const next = appReducer(initialState, {
+      type: 'UPDATE_ENGAGEMENT_CONFIG',
+      payload: { clientName: 'Nexus Global', showCostData: false },
+    });
+    expect(next.engagementConfig.clientName).toBe('Nexus Global');
+    expect(next.engagementConfig.showCostData).toBe(false);
+    expect(next.engagementConfig.appLimitWarningThreshold).toBe(0.8);
+  });
+
+  test('scoring weights sum to 1.0 in default engagementConfig', () => {
+    const w = initialState.engagementConfig.scoringWeights;
+    const sum = Object.values(w).reduce((a, b) => a + b, 0);
+    expect(sum).toBeCloseTo(1.0);
+  });
+
   test('initialState has analystConfig with correct defaults', () => {
     expect(initialState.analystConfig.analystName).toBe('');
     expect(initialState.analystConfig.currency).toBe('USD');

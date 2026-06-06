@@ -9,6 +9,20 @@ export const initialState = {
   isDemoMode:     false,
   currentScreen:  'SESSION_START',
   aiCallLog:      [],
+  engagementConfig: {
+    clientName:                 '',
+    engagementCode:             '',
+    currency:                   null,
+    appLimitWarningThreshold:   0.8,
+    includeAiCallLog:           true,
+    showCostData:               true,
+    scoringWeights: {
+      technicalDebt:  0.25,
+      businessValue:  0.25,
+      securityRisk:   0.25,
+      cloudReadiness: 0.25,
+    },
+  },
   analystConfig: {
     analystName:          '',
     firmName:             '',
@@ -37,6 +51,10 @@ export function appReducer(state, action) {
       return { ...state, analystConfig: action.payload };
     case 'UPDATE_ANALYST_CONFIG':
       return { ...state, analystConfig: { ...state.analystConfig, ...action.payload } };
+    case 'SET_ENGAGEMENT_CONFIG':
+      return { ...state, engagementConfig: action.payload };
+    case 'UPDATE_ENGAGEMENT_CONFIG':
+      return { ...state, engagementConfig: { ...state.engagementConfig, ...action.payload } };
     default:
       return state;
   }
