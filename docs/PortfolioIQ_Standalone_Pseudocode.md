@@ -3138,6 +3138,119 @@ SAAS CONVERSION FLOW (Phase 2):
 
 ---
 
+---
+
+## CONFIGURATION ARCHITECTURE
+
+### Analyst Settings
+
+Stored in `analyst_config.json` — never inside the engagement file. Loaded on app start via `ipcBridge.loadAnalystConfig()`. Saved via `ipcBridge.saveAnalystConfig()`.
+
+```
+analystConfig {
+  analystName:         string   // Jan's name, appears on exports
+  firmName:            string   // Consulting firm name, appears on exports
+  currency:            string   // Default: 'USD'. Used by formatCurrency()
+  dateFormat:          string   // Default: 'MM/DD/YYYY'. Used by formatDate()
+  autoSaveInterval:    integer  // Minutes between auto-saves. Default: 15
+  aiModel:             string   // Claude model ID. Default: 'claude-sonnet-4-6'
+                                // Never hardcoded in API calls — always read from here
+  confidenceThreshold: float    // Minimum confidence to show green badge. Default: 0.75
+  showAiReasoning:     boolean  // Show/hide AI reasoning text on cards. Default: true
+}
+```
+
+### Engagement Settings
+
+Stored inside the engagement state (AppContext). Set when a new engagement is started or a file is resumed. Never stored in analyst_config.json.
+
+```
+engagementConfig {
+  clientName:                string   // Populated from engagement key on start
+  engagementCode:            string   // Short reference code, e.g. 'NGS-2026'
+  currency:                  string   // Overrides analystConfig.currency if set
+  appLimitWarningThreshold:  float    // Warn Jan when portfolio is at this % of key limit. Default: 0.8
+  includeAiCallLog:          boolean  // Include aiCallLog in exported .portfolioiq file. Default: true
+  showCostData:              boolean  // Show/hide cost data on dashboard. Default: true
+  scoringWeights: {
+    technicalDebt:   float  // Default: 0.25
+    businessValue:   float  // Default: 0.25
+    securityRisk:    float  // Default: 0.25
+    cloudReadiness:  float  // Default: 0.25
+    // Weights must always sum to 1.0
+    // Source of truth: engagementConfig.scoringWeights
+    // Never hardcoded in the scorer
+  }
+}
+```
+
+### Field Requirements
+
+Three tiers determine scoring eligibility and confidence scoring.
+
+**REQUIRED** (missing any → UNSCORABLE, app never sent to Claude API):
+- `name` — Application Name — Cannot score without an app name
+- `lifecycle_stage` — Lifecycle Stage — Core scoring dimension
+- `support_status` — Support Status — Core scoring dimension
+
+**RECOMMENDED** (missing any → PARTIAL, confidence reduced 0.05 per missing field):
+- `vendor` — Vendor — Improves disposition accuracy
+- `annual_cost` — Annual Cost — Required for savings calculations
+- `active_user_count` — Active Users — Required for utilization scoring
+- `incident_count_12mo` — Incident Count (12mo) — Improves risk scoring
+
+**OPTIONAL** (missing → no status penalty, noted in reasoning):
+- `technical_debt_score` — Technical Debt Score — Enhances scoring if available
+- `business_value_score` — Business Value Score — Enhances scoring if available
+- `security_posture_score` — Security Posture Score — Enhances risk scoring
+
+### Confidence Score Definition
+
+```
+FULL    ≥ 0.85  High Confidence    All required and recommended fields present
+PARTIAL ≥ 0.65  Medium Confidence  All required fields present, some recommended missing
+LOW     ≥ 0.00  Low Confidence     One or more recommended fields missing
+```
+
+Confidence adjustment formula: `baseConfidence + confidenceAdjustment`
+where `confidenceAdjustment = -(missingRecommendedCount × 0.05)`
+
+### Partial Data Handling
+
+Every app is run through `validateAppData(appRecord)` before any API call.
+
+```
+validateAppData(appRecord) returns:
+  scoringStatus:        'FULL' | 'PARTIAL' | 'UNSCORABLE'
+  missingRequired:      [{ field, label, reason }]
+  missingRecommended:   [{ field, label, reason }]
+  confidenceAdjustment: 0.0 to -0.35
+  explanation:          string  // Human-readable, shown on Validation Queue
+
+UNSCORABLE rule:  any REQUIRED field missing → never sent to Claude API
+PARTIAL rule:     all REQUIRED present, some RECOMMENDED missing →
+                  sent with reduced field set, prompt acknowledges gaps
+FULL rule:        all REQUIRED and RECOMMENDED present →
+                  full scoring, no prompt caveats
+```
+
+`validatePortfolio(applications)` aggregates across all apps and returns `canProceed: false` only when every app is UNSCORABLE.
+
+The dashboard and PDF report show three groups: Fully Scored, Partially Scored, Unscorable.
+
+### What Is Never User-Configurable
+
+The following are fixed constants — not editable via any UI, settings screen, or config file:
+
+- `KEY_FORMAT_REGEX` — engagement key format is locked to the HMAC signing scheme
+- `SUPPORTED_VERSIONS` — only v2.3 engagement files are accepted
+- `PERMITTED_API_FIELDS` — the field allowlist sent to Claude (enforced in buildScoringPrompt)
+- Gartner TIME disclaimer — legally required, cannot be suppressed
+- Confidence adjustment formula — 0.05 per missing recommended field, fixed
+- Scoring status thresholds (FULL ≥ 0.85, PARTIAL ≥ 0.65) — fixed per scoring spec
+
+---
+
 *PortfolioIQ Standalone — Pseudocode v2.3 | Ken Turner | June 2026*
 *v2.0: Gartner TIME alignment, scoring transparency, security posture,*
 *business capability mapping, review cadence, AI Portfolio Advisor*
