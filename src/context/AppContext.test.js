@@ -41,4 +41,16 @@ describe('appReducer', () => {
     expect(initialState.isDemoMode).toBe(false);
     expect(initialState.sessionMode).toBe(false);
   });
+
+  test('initialState.sessionId is a valid UUID v4', () => {
+    expect(initialState.sessionId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+    );
+  });
+
+  test('SET_KEY preserves sessionId', () => {
+    const key = { valid: true, clientName: 'Acme' };
+    const next = appReducer(initialState, { type: 'SET_KEY', payload: key });
+    expect(next.sessionId).toBe(initialState.sessionId);
+  });
 });

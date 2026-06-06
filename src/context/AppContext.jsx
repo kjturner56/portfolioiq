@@ -3,6 +3,7 @@ import { CONFIG } from '../constants/config';
 
 export const initialState = {
   sessionMode:    CONFIG.SESSION_MODE,
+  sessionId:      crypto.randomUUID(),
   engagementKey:  null,
   engagement:     null,
   isDemoMode:     false,
