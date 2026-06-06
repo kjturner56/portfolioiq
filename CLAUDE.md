@@ -39,6 +39,29 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - All currency formatting via formatCurrency() — never format inline
 - All date formatting via formatDate() — never format inline
 - Always include Gartner disclaimer when TIME framework is displayed or exported: 'TIME is a registered trademark of Gartner. PortfolioIQ is not affiliated with or endorsed by Gartner.'
+- The AI Portfolio Advisor must use a buildAdvisorContext() function that constructs a sanitized portfolio summary using only permitted fields. Raw engagement objects are never passed directly to the Claude API. Conversation history is capped at 10 turns.
+
+## Data Handling Rules for AI Touchpoints
+
+### PDF Report
+- The PDF renderer must only pull from a defined display field set — never pass the raw engagement state or full application objects to the PDF generator
+- A buildReportData() function constructs the sanitized payload (implemented in Session 7)
+
+### AI Schema Mapper
+- When mapping CSV columns, only send column headers and up to 3 sample values per column to the Claude API — never send full column data
+- The schema mapper prompt must never include more than 500 tokens of sample data total
+
+### Engagement File Export
+- When Jan exports a .portfolioiq file, display a one-time confirmation: 'This file contains client portfolio data. Store and share it securely.'
+- Log the export event to aiCallLog with action: 'ENGAGEMENT_EXPORT'
+
+### Error Sanitization
+- Before any error is logged or reported externally, strip all application names, vendor names, cost figures, and user counts from the error context
+- Errors may include screen name, action type, and error code only
+
+### Auto-Save
+- The auto-save confirmation toast must include: 'Saved locally — this file contains client data.'
+- Auto-save events are logged to aiCallLog with action: 'AUTO_SAVE'
 
 ## File Structure
 src/
