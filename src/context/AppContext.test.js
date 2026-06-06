@@ -53,4 +53,39 @@ describe('appReducer', () => {
     const next = appReducer(initialState, { type: 'SET_KEY', payload: key });
     expect(next.sessionId).toBe(initialState.sessionId);
   });
+
+  test('initialState has empty aiCallLog', () => {
+    expect(initialState.aiCallLog).toEqual([]);
+  });
+
+  test('ADD_AI_CALL appends entry to aiCallLog', () => {
+    const entry = {
+      timestamp: '2026-06-05T10:00:00Z',
+      actor: 'system',
+      action: 'score',
+      resource: 'app-001',
+      result: 'success',
+      session_id: 'test-session-id',
+      appId: 'app-001',
+      appName: 'SAP ERP',
+      fieldsScanned: 8,
+      tokensUsed: 1200,
+      model: 'claude-sonnet-4-6',
+    };
+    const next = appReducer(initialState, { type: 'ADD_AI_CALL', payload: entry });
+    expect(next.aiCallLog).toHaveLength(1);
+    expect(next.aiCallLog[0]).toEqual(entry);
+  });
+
+  test('ADD_AI_CALL appends without mutating prior entries', () => {
+    const first = { appId: 'app-001', appName: 'SAP ERP' };
+    const second = { appId: 'app-002', appName: 'Salesforce' };
+    const s1 = appReducer(initialState, { type: 'ADD_AI_CALL', payload: first });
+    const s2 = appReducer(s1, { type: 'ADD_AI_CALL', payload: second });
+    expect(s2.aiCallLog).toHaveLength(2);
+    expect(s2.aiCallLog[0]).toEqual(first);
+    expect(s2.aiCallLog[1]).toEqual(second);
+    // original s1 log is unchanged
+    expect(s1.aiCallLog).toHaveLength(1);
+  });
 });

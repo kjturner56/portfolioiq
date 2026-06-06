@@ -8,6 +8,7 @@ export const initialState = {
   engagement:     null,
   isDemoMode:     false,
   currentScreen:  'SESSION_START',
+  aiCallLog:      [],
 };
 
 export function appReducer(state, action) {
@@ -20,6 +21,8 @@ export function appReducer(state, action) {
       return { ...state, engagement: action.payload, isDemoMode: true };
     case 'RESTORE_ENGAGEMENT':
       return { ...state, engagement: action.payload, isDemoMode: false };
+    case 'ADD_AI_CALL':
+      return { ...state, aiCallLog: [...state.aiCallLog, action.payload] };
     default:
       return state;
   }
