@@ -15,3 +15,10 @@ test('CONFIG.KEY_FORMAT_REGEX rejects malformed keys', () => {
 test('CONFIG.SUPPORTED_VERSIONS includes 2.3', () => {
   expect(CONFIG.SUPPORTED_VERSIONS).toContain('2.3');
 });
+
+test('CONFIG.LOADING_STATES has all four states', () => {
+  expect(CONFIG.LOADING_STATES.IDLE).toBe('idle');
+  expect(CONFIG.LOADING_STATES.LOADING).toBe('loading');
+  expect(CONFIG.LOADING_STATES.SUCCESS).toBe('success');
+  expect(CONFIG.LOADING_STATES.ERROR).toBe('error');
+});
