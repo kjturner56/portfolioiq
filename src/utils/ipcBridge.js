@@ -33,6 +33,32 @@ const ipcBridge = {
     return { data: null, error: 'Claude API not yet wired — implemented in Session 2.' };
   },
 
+  async saveAnalystConfig(config) {
+    try {
+      const content = JSON.stringify(config, null, 2);
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'analyst_config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      return { data: { path: 'analyst_config.json' }, error: null };
+    } catch (err) {
+      return { data: null, error: err.message };
+    }
+  },
+
+  async loadAnalystConfig() {
+    try {
+      const raw = import.meta.env.VITE_ANALYST_CONFIG ?? null;
+      if (!raw) return { data: null, error: null };
+      return { data: JSON.parse(raw), error: null };
+    } catch (err) {
+      return { data: null, error: err.message };
+    }
+  },
+
   async getCredential(key) {
     const value = import.meta.env[`VITE_${key}`] ?? null;
     return {

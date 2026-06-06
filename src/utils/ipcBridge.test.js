@@ -42,3 +42,20 @@ describe('ipcBridge.callClaude', () => {
     expect(result.error).toContain('Session 2');
   });
 });
+
+describe('ipcBridge.loadAnalystConfig', () => {
+  test('returns { data: null, error: null } when env var not set', async () => {
+    const result = await ipcBridge.loadAnalystConfig();
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+});
+
+describe('ipcBridge.saveAnalystConfig', () => {
+  test('returns { data, error } shape with path', async () => {
+    const config = { analystName: 'Ken Turner', currency: 'USD' };
+    const result = await ipcBridge.saveAnalystConfig(config);
+    expect(result.error).toBeNull();
+    expect(result.data.path).toBe('analyst_config.json');
+  });
+});
