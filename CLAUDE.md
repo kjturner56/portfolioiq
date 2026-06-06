@@ -32,6 +32,13 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - Never write a hex color directly in a component
 - All async operations return {data, error} shape
 - SESSION_MODE check before every data persistence operation
+- Never console.log portfolio application data
+- Audit log entries are append-only — never mutate or delete them
+- All errors must use shape: { code, message, context } — never a plain string
+- Use LOADING_STATES constants from config.js — never hardcode loading/error strings
+- All currency formatting via formatCurrency() — never format inline
+- All date formatting via formatDate() — never format inline
+- Always include Gartner disclaimer when TIME framework is displayed or exported: 'TIME is a registered trademark of Gartner. PortfolioIQ is not affiliated with or endorsed by Gartner.'
 
 ## File Structure
 src/
