@@ -63,6 +63,10 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - The auto-save confirmation toast must include: 'Saved locally — this file contains client data.'
 - Auto-save events are logged to aiCallLog with action: 'AUTO_SAVE'
 
+### Resume Engagement Error Handling
+- If .portfolioiq file import fails validation, the error logged must not include file contents
+- Error context may only include: filename, file size, portfolioiq_version found, and error code
+
 ## File Structure
 src/
   components/    — React screens
