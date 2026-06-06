@@ -1,9 +1,16 @@
-function App() {
-  return (
-    <div>
-      <h1>PortfolioIQ</h1>
-    </div>
-  )
-}
+import { useApp } from './context/AppContext.jsx';
+import SessionStart from './components/SessionStart';
+import DataUpload from './components/DataUpload';
+import ValidationQueueStub from './components/ValidationQueueStub';
 
-export default App
+const SCREENS = {
+  SESSION_START:    SessionStart,
+  DATA_UPLOAD:      DataUpload,
+  VALIDATION_QUEUE: ValidationQueueStub,
+};
+
+export default function App() {
+  const { state } = useApp();
+  const Screen = SCREENS[state.currentScreen] ?? SessionStart;
+  return <Screen />;
+}
