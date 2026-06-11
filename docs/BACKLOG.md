@@ -6,6 +6,7 @@ Review before each new session to see if priorities have changed.
 ---
 
 ## High Priority (next 1-3 sessions)
+- [ ] **Legal — get a lawyer to draft the EULA before Jan runs her first real engagement.** Key clauses: AI advisory limitation, data accuracy disclaimer, scope limitation, analyst professional responsibility, limitation of liability.
 - [ ] Configuration screen UI — analyst name, firm, currency, auto-save settings
 - [ ] In-app feedback button — captures current screen and sanitized state, emails Ken
 - [ ] Data collection Excel template — standard template Jan gives clients before engagement
