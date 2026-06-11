@@ -76,6 +76,11 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - mappingProposal: null in AppContext initialState
 - Reducer actions: SET_MAPPING_PROPOSAL, CONFIRM_MAPPING, CORRECT_MAPPING, APPROVE_MAPPING
 
+### AI Provider
+- All AI scoring calls must go through src/utils/aiProvider.js — never call the Anthropic API directly from components or ipcBridge
+- Phase 1a implements Anthropic only; Phase 2 adds OpenAI and Azure OpenAI
+- Every provider adapter must return the normalised shape: disposition, scoring_breakdown, uncertainty_flags, replacement_suggestions, time_classification, confidence, ai_reasoning
+
 ### AI Scoring
 - buildScoringPrompt() must request a structured scoring_breakdown object — never free text scores
 - buildScoringPrompt() must request structured uncertainty flags — data_conflicts, unusual_vendor, low_data_quality, low_confidence_reason, requires_human_review

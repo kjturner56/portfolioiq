@@ -20,6 +20,7 @@ Review before each new session to see if priorities have changed.
 - [ ] COTS replacement suggestions for Retire and Modernize dispositions — must be in buildScoringPrompt() from Session 2; replacement_suggestions array in scoring response; Jan confirms each before PDF; disclaimer required on every display; never include pricing or support status (GitHub Issue #18, Session 2)
 
 ## Medium Priority (Phase 1b)
+- [ ] **AI provider abstraction layer** — src/utils/aiProvider.js routes all AI calls; normalised response shape across providers; Phase 1a Anthropic only; Phase 2 adds OpenAI + Azure OpenAI; provider set in analystConfig.aiModel, overridable per engagement (GitHub Issue #19, design Session 2)
 - [ ] **Legal protection layer — disclaimers and EULA** — EULA screen (Session 1 pre-session prep), persistent footer disclaimer (all screens), inline validation confirmation (Session 6), strengthened report disclaimer + scope limitation (Session 7), mapping approval data accuracy statement; see GitHub Issue #14
 - [ ] **Phase 1b — Electron wrapper (self-implementation)** — Ken implements independently using Claude Code; main.js + packaging config only, React unchanged; see GitHub Issue #13 for full task checklist (est. 2–3 sessions)
 - [ ] Dependency mapping between applications — directed app-A depends-on app-B; retirement recommendations flag dependency risks; Session 4 data model, Session 5 display (GitHub Issue #10)
