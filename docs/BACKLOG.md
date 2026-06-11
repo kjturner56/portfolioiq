@@ -15,6 +15,7 @@ Review before each new session to see if priorities have changed.
 - [ ] AI uncertainty flags — structured uncertainty_flags required from Claude in Session 2; requires_human_review drives HITL flagging (GitHub Issue #9)
 
 ## Medium Priority (Phase 1b)
+- [ ] **Phase 1b — Electron wrapper (self-implementation)** — Ken implements independently using Claude Code; main.js + packaging config only, React unchanged; see GitHub Issue #13 for full task checklist (est. 2–3 sessions)
 - [ ] Dependency mapping between applications — directed app-A depends-on app-B; retirement recommendations flag dependency risks; Session 4 data model, Session 5 display (GitHub Issue #10)
 - [ ] Business capability mapping — capability_tags per app (HR, Finance, Operations, Sales, IT, Legal); enables over-investment analysis; Session 3 data entry, Session 5 heat map (GitHub Issue #11)
 - [ ] AES-256 encryption for .portfolioiq files
