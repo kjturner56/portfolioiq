@@ -15,6 +15,7 @@ Review before each new session to see if priorities have changed.
 - [ ] AI uncertainty flags — structured uncertainty_flags required from Claude in Session 2; requires_human_review drives HITL flagging (GitHub Issue #9)
 
 ## Medium Priority (Phase 1b)
+- [ ] **Legal protection layer — disclaimers and EULA** — EULA screen (Session 1 pre-session prep), persistent footer disclaimer (all screens), inline validation confirmation (Session 6), strengthened report disclaimer + scope limitation (Session 7), mapping approval data accuracy statement; see GitHub Issue #14
 - [ ] **Phase 1b — Electron wrapper (self-implementation)** — Ken implements independently using Claude Code; main.js + packaging config only, React unchanged; see GitHub Issue #13 for full task checklist (est. 2–3 sessions)
 - [ ] Dependency mapping between applications — directed app-A depends-on app-B; retirement recommendations flag dependency risks; Session 4 data model, Session 5 display (GitHub Issue #10)
 - [ ] Business capability mapping — capability_tags per app (HR, Finance, Operations, Sales, IT, Legal); enables over-investment analysis; Session 3 data entry, Session 5 heat map (GitHub Issue #11)
