@@ -79,8 +79,12 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 ### AI Scoring
 - buildScoringPrompt() must request a structured scoring_breakdown object — never free text scores
 - buildScoringPrompt() must request structured uncertainty flags — data_conflicts, unusual_vendor, low_data_quality, low_confidence_reason, requires_human_review
+- buildScoringPrompt() must request replacement_suggestions for Retire and Modernize dispositions only — empty array for Retain
 - Claude API responses must be parsed for both scoring_breakdown and uncertainty_flags before being stored in the engagement file
 - Apps with requires_human_review: true must be visually flagged in the HITL validation queue
+- replacement_suggestions are never auto-included in the report — Jan must confirm each one before report generation
+- The replacement suggestion disclaimer must appear wherever suggestions are displayed: 'Replacement suggestions are AI-generated based on general market knowledge as of [analysis date]. They do not constitute a vendor recommendation or endorsement. Independent vendor evaluation is recommended before presenting options to clients.'
+- Never suggest a specific vendor pricing or current support status — Claude's knowledge may be outdated
 
 ### Engagement File Export
 - When Jan exports a .portfolioiq file, display a one-time confirmation: 'This file contains client portfolio data. Store and share it securely.'
