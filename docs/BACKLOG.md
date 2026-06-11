@@ -14,6 +14,9 @@ Review before each new session to see if priorities have changed.
 - [ ] Offline mode and connection resilience — detect network unavailability in ipcBridge.callClaude(), add CONNECTION_STATUS indicator, ensure all non-AI screens work fully offline (GitHub Issue #7)
 - [ ] Scoring breakdown per application — structured scoring_breakdown object required from Claude in Session 2; cannot be retrofitted later (GitHub Issue #8)
 - [ ] AI uncertainty flags — structured uncertainty_flags required from Claude in Session 2; requires_human_review drives HITL flagging (GitHub Issue #9)
+- [ ] Re-upload data after initial load — Re-upload Data button from sidebar/Dashboard; re-runs schema mapper without losing validations; warns Jan if validated fields change (reset to PENDING); confirm if new file has fewer apps; RE_UPLOAD_DATA reducer action (GitHub Issue #15, Session 2)
+- [ ] Admin-configurable blocked fields per engagement — platform-level global blocks (Ken) + engagement-level client-specific blocks (Jan); excluded from buildScoringPrompt(); logged to audit trail with action: FIELD_BLOCKED; stored in engagementConfig.clientBlockedFields (GitHub Issue #16, Session 3–4)
+- [ ] Data Quality & Coverage screen — between Mapping Review and AI Scoring; three groups: Fully Scorable / Partially Scorable / Unscorable; coverage table; HITL gate before AI Scoring; uses existing validatePortfolio(); add SHOW_DATA_QUALITY to SCREENS map (GitHub Issue #17, Session 2)
 
 ## Medium Priority (Phase 1b)
 - [ ] **Legal protection layer — disclaimers and EULA** — EULA screen (Session 1 pre-session prep), persistent footer disclaimer (all screens), inline validation confirmation (Session 6), strengthened report disclaimer + scope limitation (Session 7), mapping approval data accuracy statement; see GitHub Issue #14
