@@ -50,6 +50,31 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 ### AI Schema Mapper
 - When mapping CSV columns, only send column headers and up to 3 sample values per column to the Claude API — never send full column data
 - The schema mapper prompt must never include more than 500 tokens of sample data total
+- The schema mapper must return a PROPOSED mapping only — never an applied mapping
+- Proposed mapping shape:
+  ```js
+  {
+    mappings: [
+      {
+        sourceColumn: 'App Name',
+        targetField: 'name',
+        confidence: 0.95,
+        aiReasoning: 'Exact match on common field name',
+        status: 'PROPOSED' | 'CONFIRMED' | 'CORRECTED' | 'UNMAPPED',
+        analystOverride: null | string,
+      }
+    ],
+    unmappedColumns: [],
+    unmappedRequiredFields: [],
+    canProceedToScoring: boolean,
+  }
+  ```
+- canProceedToScoring is false until every REQUIRED field mapping has status CONFIRMED or CORRECTED — never PROPOSED
+- Scoring never starts until Jan explicitly clicks Approve Mapping
+- Corrected mappings are logged to aiCallLog with action: 'MAPPING_CORRECTED'
+- MAPPING_REVIEW is a screen in App.jsx SCREENS map
+- mappingProposal: null in AppContext initialState
+- Reducer actions: SET_MAPPING_PROPOSAL, CONFIRM_MAPPING, CORRECT_MAPPING, APPROVE_MAPPING
 
 ### AI Scoring
 - buildScoringPrompt() must request a structured scoring_breakdown object — never free text scores
