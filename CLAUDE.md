@@ -11,6 +11,14 @@ One React codebase, three deployment targets:
 - Phase 1b: Matt wraps in Electron
 - Phase 2: Web SaaS at app.getportfolioiq.com
 
+## Phase 1b — Electron wrapper rules (apply when this phase begins)
+- Vite config must include `base: './'` in vite.config.js before any Electron build — without this, images and assets silently fail to load in the packaged app even though they work fine in npm start.
+- main.js must load the app conditionally: `app.isPackaged ? mainWindow.loadFile(path.join(__dirname, 'index.html')) : mainWindow.loadURL('http://localhost:5173')` — dev loads the Vite server, production loads the built file.
+- BrowserWindow webPreferences must keep `contextIsolation: true`, `nodeIntegration: false`, and `sandbox: true`. Never disable these for convenience. This is non-negotiable per the security architecture already defined for window.api.
+- All access to Node.js or Electron APIs from React components must go through the existing window.api pattern via a preload.js file using contextBridge — never via direct require() in renderer code.
+- When packaging, only bundle the Vite build output directory, not the full source tree or node_modules — configure electron-builder's files option accordingly.
+- No React Router is used in Phase 1a or Phase 1b per existing architecture rules, so HashRouter vs BrowserRouter does not apply. Document this only in case routing is added later.
+
 ## IPC Bridge (CRITICAL)
 Every external call routes through window.api — never call fetch() 
 or fs directly from React components:
