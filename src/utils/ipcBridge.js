@@ -1,6 +1,116 @@
 import { validateKey as _validateKey } from './keyValidation';
 import { REQUIRED_APP_FIELDS } from '../constants/config';
 
+const VALID_DISPOSITIONS = ['Retain', 'Modernize', 'Retire', 'Replace'];
+
+const KNOWN_SCORE_FIELDS = [
+  'technical_debt_score',
+  'business_value_score',
+  'security_posture_score',
+];
+
+function validateScoringResponse(response) {
+  // 1. Must be a non-null, non-array object
+  if (response === null || typeof response !== 'object' || Array.isArray(response)) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: 'Response must be a non-null object.',
+        context: { field: 'response' },
+      },
+    };
+  }
+
+  // 2. disposition must be one of VALID_DISPOSITIONS
+  if (!VALID_DISPOSITIONS.includes(response.disposition)) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: `disposition must be one of: ${VALID_DISPOSITIONS.join(', ')}.`,
+        context: { field: 'disposition' },
+      },
+    };
+  }
+
+  // 3. confidence must be a finite number between 0.0 and 1.0 inclusive
+  if (!Number.isFinite(response.confidence) || response.confidence < 0.0 || response.confidence > 1.0) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: 'confidence must be a number between 0.0 and 1.0 inclusive.',
+        context: { field: 'confidence' },
+      },
+    };
+  }
+
+  // 4. scoring_breakdown must exist and be a non-null object
+  if (
+    typeof response.scoring_breakdown !== 'object' ||
+    response.scoring_breakdown === null ||
+    Array.isArray(response.scoring_breakdown)
+  ) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: 'scoring_breakdown must be a non-null object.',
+        context: { field: 'scoring_breakdown' },
+      },
+    };
+  }
+
+  // 5. Any known score fields that are present must be numbers between 0 and 100 inclusive
+  for (const field of KNOWN_SCORE_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(response.scoring_breakdown, field)) {
+      const score = response.scoring_breakdown[field];
+      if (!Number.isFinite(score) || score < 0 || score > 100) {
+        return {
+          valid: false,
+          error: {
+            code: 'INVALID_SCORING_RESPONSE',
+            message: `scoring_breakdown.${field} must be a number between 0 and 100 inclusive.`,
+            context: { field: `scoring_breakdown.${field}` },
+          },
+        };
+      }
+    }
+  }
+
+  // 6. uncertainty_flags must exist and be a non-null object
+  if (
+    response.uncertainty_flags === null ||
+    response.uncertainty_flags === undefined ||
+    typeof response.uncertainty_flags !== 'object' ||
+    Array.isArray(response.uncertainty_flags)
+  ) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: 'uncertainty_flags must be a non-null object.',
+        context: { field: 'uncertainty_flags' },
+      },
+    };
+  }
+
+  // 7. uncertainty_flags.requires_human_review must be a boolean
+  if (typeof response.uncertainty_flags.requires_human_review !== 'boolean') {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_SCORING_RESPONSE',
+        message: 'uncertainty_flags.requires_human_review must be a boolean.',
+        context: { field: 'uncertainty_flags.requires_human_review' },
+      },
+    };
+  }
+
+  return { valid: true, error: null };
+}
+
 const ipcBridge = {
   async validateKey(keyString) {
     try {
@@ -111,3 +221,5 @@ if (!window.api) {
 }
 
 export default ipcBridge;
+// exported for testing only — never import from React components
+export { validateScoringResponse };

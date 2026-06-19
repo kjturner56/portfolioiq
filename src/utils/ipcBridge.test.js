@@ -9,7 +9,7 @@ vi.mock('./keyValidation', () => ({
   ),
 }));
 
-import ipcBridge from './ipcBridge';
+import ipcBridge, { validateScoringResponse } from './ipcBridge';
 
 describe('ipcBridge.validateKey', () => {
   test('returns { data, error } shape on valid key', async () => {
@@ -118,5 +118,169 @@ describe('ipcBridge.mapSchema', () => {
     const result = await ipcBridge.mapSchema(['App Name'], []);
     expect(Array.isArray(result.data.mappings)).toBe(true);
     expect(result.data.mappings).toHaveLength(0);
+  });
+});
+
+const validResponse = () => ({
+  disposition: 'Retain',
+  confidence: 0.85,
+  scoring_breakdown: {
+    technical_debt_score: 72,
+    business_value_score: 55,
+    security_posture_score: 90,
+  },
+  uncertainty_flags: {
+    data_conflicts: false,
+    unusual_vendor: false,
+    low_data_quality: false,
+    low_confidence_reason: null,
+    requires_human_review: false,
+  },
+  replacement_suggestions: [],
+  time_classification: 'Invest',
+  ai_reasoning: 'Well-maintained system.',
+});
+
+describe('validateScoringResponse', () => {
+  test('returns valid: true for a correctly shaped response', () => {
+    const result = validateScoringResponse(validResponse());
+    expect(result.valid).toBe(true);
+    expect(result.error).toBeNull();
+  });
+
+  test('returns valid: false if response is null', () => {
+    const result = validateScoringResponse(null);
+    expect(result.valid).toBe(false);
+    expect(result.error).not.toBeNull();
+  });
+
+  test('returns valid: false if response is a string', () => {
+    const result = validateScoringResponse('Retain');
+    expect(result.valid).toBe(false);
+    expect(result.error).not.toBeNull();
+  });
+
+  test('returns valid: false if disposition is not in VALID_DISPOSITIONS', () => {
+    const r = validResponse();
+    r.disposition = 'Archive';
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('disposition');
+  });
+
+  test('returns valid: false if confidence is above 1.0', () => {
+    const r = validResponse();
+    r.confidence = 1.1;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('confidence');
+  });
+
+  test('returns valid: false if confidence is below 0.0', () => {
+    const r = validResponse();
+    r.confidence = -0.1;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('confidence');
+  });
+
+  test('returns valid: false if confidence is not a number', () => {
+    const r = validResponse();
+    r.confidence = '0.85';
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('confidence');
+  });
+
+  test('returns valid: false if scoring_breakdown is missing', () => {
+    const r = validResponse();
+    delete r.scoring_breakdown;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('scoring_breakdown');
+  });
+
+  test('returns valid: false if scoring_breakdown score is above 100', () => {
+    const r = validResponse();
+    r.scoring_breakdown.technical_debt_score = 101;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('scoring_breakdown.technical_debt_score');
+  });
+
+  test('returns valid: false if scoring_breakdown score is below 0', () => {
+    const r = validResponse();
+    r.scoring_breakdown.business_value_score = -1;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('scoring_breakdown.business_value_score');
+  });
+
+  test('returns valid: false if requires_human_review is not a boolean', () => {
+    const r = validResponse();
+    r.uncertainty_flags.requires_human_review = 'false';
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('uncertainty_flags.requires_human_review');
+  });
+
+  test('error shape has code, message, context fields on failure', () => {
+    const result = validateScoringResponse(null);
+    expect(result.error).toHaveProperty('code');
+    expect(result.error).toHaveProperty('message');
+    expect(result.error).toHaveProperty('context');
+    expect(result.error.code).toBe('INVALID_SCORING_RESPONSE');
+  });
+
+  test('returns valid: true when confidence is exactly 0.0', () => {
+    const r = validResponse();
+    r.confidence = 0.0;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(true);
+  });
+
+  test('returns valid: true when confidence is exactly 1.0', () => {
+    const r = validResponse();
+    r.confidence = 1.0;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(true);
+  });
+
+  test('returns valid: true when a score is exactly 0', () => {
+    const r = validResponse();
+    r.scoring_breakdown.security_posture_score = 0;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(true);
+  });
+
+  test('returns valid: true when a score is exactly 100', () => {
+    const r = validResponse();
+    r.scoring_breakdown.technical_debt_score = 100;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(true);
+  });
+
+  test('returns valid: false if confidence is NaN', () => {
+    const r = validResponse();
+    r.confidence = NaN;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('confidence');
+  });
+
+  test('returns valid: false if a score field is NaN', () => {
+    const r = validResponse();
+    r.scoring_breakdown.technical_debt_score = NaN;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toContain('technical_debt_score');
+  });
+
+  test('returns valid: false if uncertainty_flags is missing', () => {
+    const r = validResponse();
+    delete r.uncertainty_flags;
+    const result = validateScoringResponse(r);
+    expect(result.valid).toBe(false);
+    expect(result.error.context.field).toBe('uncertainty_flags');
   });
 });
