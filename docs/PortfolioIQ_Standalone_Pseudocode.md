@@ -3105,7 +3105,7 @@ PHASE 1 BUILD SEQUENCE:
     Session 7:  PDF Report generation
     Session 8:  Platform Admin — Key generation screen
     Session 9:  End-to-end test with 3 synthetic datasets
-    Session 10: Handoff document for Matt (Electron spec)
+    Session 10: Electron Build Guide — A build guide for Kenneth Turner to direct Claude Code through the Electron wrapper implementation himself — main.js, preload.js, IPC handlers, code signing, and packaging config. Ken has no dedicated Electron developer; Claude Code will implement Phase 1b directly with Ken's direction.
 
   Phase 1b — Electron packaging (Matt):
     Wrap React app in Electron shell
