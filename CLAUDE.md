@@ -154,7 +154,7 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - Partial apps are sent with a reduced field set and the prompt must acknowledge missing fields
 - The dashboard and PDF report must show three groups: Fully Scored, Partially Scored, Unscorable
 - Analyst config is stored in analyst_config.json — never inside the engagement file
-- Scoring weights are never user-configurable from the UI beyond the six approved dimensions
+- Scoring weights are never user-configurable from the UI beyond the four approved dimensions (technicalDebt, businessValue, securityRisk, cloudReadiness)
 - The following are never user-configurable: KEY_FORMAT_REGEX, SUPPORTED_VERSIONS, permitted API fields, Gartner disclaimer
 
 ### Resume Engagement Error Handling
