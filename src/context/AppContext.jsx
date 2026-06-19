@@ -35,6 +35,7 @@ export const initialState = {
   },
   validationStates:  {},
   connectionStatus:  CONFIG.CONNECTION_STATUS.UNKNOWN,
+  mappingProposal:   null,
 };
 
 export function appReducer(state, action) {
@@ -103,6 +104,50 @@ export function appReducer(state, action) {
     }
     case 'SET_CONNECTION_STATUS':
       return { ...state, connectionStatus: action.payload };
+    case 'SET_MAPPING_PROPOSAL':
+      return { ...state, mappingProposal: action.payload };
+    case 'CONFIRM_MAPPING': {
+      if (!state.mappingProposal) return state;
+      const { sourceColumn } = action.payload;
+      return {
+        ...state,
+        mappingProposal: {
+          ...state.mappingProposal,
+          mappings: state.mappingProposal.mappings.map(m =>
+            m.sourceColumn === sourceColumn ? { ...m, status: 'CONFIRMED' } : m
+          ),
+        },
+      };
+    }
+    case 'CORRECT_MAPPING': {
+      if (!state.mappingProposal) return state;
+      const { sourceColumn, targetField, analystOverride } = action.payload;
+      return {
+        ...state,
+        mappingProposal: {
+          ...state.mappingProposal,
+          mappings: state.mappingProposal.mappings.map(m =>
+            m.sourceColumn === sourceColumn
+              ? { ...m, status: 'CORRECTED', targetField, analystOverride }
+              : m
+          ),
+        },
+      };
+    }
+    case 'APPROVE_MAPPING': {
+      if (!state.mappingProposal) return state;
+      // sync with FIELD_REQUIREMENTS.REQUIRED in fieldRequirements.js
+      const REQUIRED_FIELDS = ['name', 'lifecycle_stage', 'support_status'];
+      const allRequiredConfirmed = REQUIRED_FIELDS.every(field => {
+        const mapping = state.mappingProposal.mappings.find(m => m.targetField === field);
+        return mapping && (mapping.status === 'CONFIRMED' || mapping.status === 'CORRECTED');
+      });
+      if (!allRequiredConfirmed) return state;
+      return {
+        ...state,
+        mappingProposal: { ...state.mappingProposal, canProceedToScoring: true },
+      };
+    }
     default:
       return state;
   }

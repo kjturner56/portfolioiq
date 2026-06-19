@@ -242,6 +242,201 @@ describe('appReducer', () => {
     });
   });
 
+  describe('mappingProposal actions', () => {
+    const proposal = {
+      mappings: [
+        {
+          sourceColumn: 'App Name',
+          targetField: 'name',
+          confidence: 0.95,
+          aiReasoning: 'Exact match on common field name',
+          status: 'PROPOSED',
+          analystOverride: null,
+        },
+        {
+          sourceColumn: 'Vendor',
+          targetField: 'vendor',
+          confidence: 0.88,
+          aiReasoning: 'Common vendor field',
+          status: 'PROPOSED',
+          analystOverride: null,
+        },
+      ],
+      unmappedColumns: [],
+      unmappedRequiredFields: [],
+      canProceedToScoring: false,
+    };
+
+    test('initialState.mappingProposal is null', () => {
+      expect(initialState.mappingProposal).toBeNull();
+    });
+
+    test('SET_MAPPING_PROPOSAL stores the full proposal object', () => {
+      const next = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      expect(next.mappingProposal).toEqual(proposal);
+    });
+
+    test('SET_MAPPING_PROPOSAL does not mutate other state', () => {
+      const next = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      expect(next.currentScreen).toBe(initialState.currentScreen);
+      expect(next.engagementKey).toBe(initialState.engagementKey);
+    });
+
+    test('CONFIRM_MAPPING sets status to CONFIRMED on the matching entry', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CONFIRM_MAPPING',
+        payload: { sourceColumn: 'App Name' },
+      });
+      const confirmed = next.mappingProposal.mappings.find(m => m.sourceColumn === 'App Name');
+      expect(confirmed.status).toBe('CONFIRMED');
+    });
+
+    test('CONFIRM_MAPPING leaves unmatched entries unchanged', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CONFIRM_MAPPING',
+        payload: { sourceColumn: 'App Name' },
+      });
+      const other = next.mappingProposal.mappings.find(m => m.sourceColumn === 'Vendor');
+      expect(other.status).toBe('PROPOSED');
+    });
+
+    test('CONFIRM_MAPPING does not affect other mappingProposal fields', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CONFIRM_MAPPING',
+        payload: { sourceColumn: 'App Name' },
+      });
+      expect(next.mappingProposal.canProceedToScoring).toBe(false);
+      expect(next.mappingProposal.unmappedColumns).toEqual([]);
+    });
+
+    test('CORRECT_MAPPING sets status to CORRECTED and updates targetField and analystOverride', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CORRECT_MAPPING',
+        payload: { sourceColumn: 'App Name', targetField: 'application_name', analystOverride: 'application_name' },
+      });
+      const corrected = next.mappingProposal.mappings.find(m => m.sourceColumn === 'App Name');
+      expect(corrected.status).toBe('CORRECTED');
+      expect(corrected.targetField).toBe('application_name');
+      expect(corrected.analystOverride).toBe('application_name');
+    });
+
+    test('CORRECT_MAPPING does not change confidence or aiReasoning', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CORRECT_MAPPING',
+        payload: { sourceColumn: 'App Name', targetField: 'application_name', analystOverride: 'application_name' },
+      });
+      const corrected = next.mappingProposal.mappings.find(m => m.sourceColumn === 'App Name');
+      expect(corrected.confidence).toBe(0.95);
+      expect(corrected.aiReasoning).toBe('Exact match on common field name');
+    });
+
+    test('CORRECT_MAPPING leaves unmatched entries unchanged', () => {
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: proposal });
+      const next = appReducer(withProposal, {
+        type: 'CORRECT_MAPPING',
+        payload: { sourceColumn: 'App Name', targetField: 'application_name', analystOverride: 'application_name' },
+      });
+      const other = next.mappingProposal.mappings.find(m => m.sourceColumn === 'Vendor');
+      expect(other.status).toBe('PROPOSED');
+      expect(other.targetField).toBe('vendor');
+    });
+
+    test('APPROVE_MAPPING sets canProceedToScoring to true', () => {
+      const allConfirmedProposal = {
+        ...proposal,
+        mappings: [
+          { sourceColumn: 'App Name', targetField: 'name', confidence: 0.95, aiReasoning: 'Exact match', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Lifecycle', targetField: 'lifecycle_stage', confidence: 0.90, aiReasoning: 'Lifecycle field', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Support', targetField: 'support_status', confidence: 0.88, aiReasoning: 'Support field', status: 'CORRECTED', analystOverride: 'support_status' },
+          { sourceColumn: 'Vendor', targetField: 'vendor', confidence: 0.88, aiReasoning: 'Common vendor field', status: 'PROPOSED', analystOverride: null },
+        ],
+      };
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: allConfirmedProposal });
+      const next = appReducer(withProposal, { type: 'APPROVE_MAPPING' });
+      expect(next.mappingProposal.canProceedToScoring).toBe(true);
+    });
+
+    test('APPROVE_MAPPING preserves mappings array unchanged', () => {
+      const allConfirmedProposal = {
+        ...proposal,
+        mappings: [
+          { sourceColumn: 'App Name', targetField: 'name', confidence: 0.95, aiReasoning: 'Exact match', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Lifecycle', targetField: 'lifecycle_stage', confidence: 0.90, aiReasoning: 'Lifecycle field', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Support', targetField: 'support_status', confidence: 0.88, aiReasoning: 'Support field', status: 'CONFIRMED', analystOverride: null },
+        ],
+      };
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: allConfirmedProposal });
+      const next = appReducer(withProposal, { type: 'APPROVE_MAPPING' });
+      expect(next.mappingProposal.mappings).toEqual(allConfirmedProposal.mappings);
+    });
+
+    test('APPROVE_MAPPING does not mutate other state', () => {
+      const allConfirmedProposal = {
+        ...proposal,
+        mappings: [
+          { sourceColumn: 'App Name', targetField: 'name', confidence: 0.95, aiReasoning: 'Exact match', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Lifecycle', targetField: 'lifecycle_stage', confidence: 0.90, aiReasoning: 'Lifecycle field', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Support', targetField: 'support_status', confidence: 0.88, aiReasoning: 'Support field', status: 'CONFIRMED', analystOverride: null },
+        ],
+      };
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: allConfirmedProposal });
+      const next = appReducer(withProposal, { type: 'APPROVE_MAPPING' });
+      expect(next.currentScreen).toBe(initialState.currentScreen);
+    });
+
+    test('CONFIRM_MAPPING returns state unchanged when mappingProposal is null', () => {
+      const next = appReducer(initialState, { type: 'CONFIRM_MAPPING', payload: { sourceColumn: 'App Name' } });
+      expect(next).toEqual(initialState);
+    });
+
+    test('CORRECT_MAPPING returns state unchanged when mappingProposal is null', () => {
+      const next = appReducer(initialState, {
+        type: 'CORRECT_MAPPING',
+        payload: { sourceColumn: 'App Name', targetField: 'application_name', analystOverride: 'application_name' },
+      });
+      expect(next).toEqual(initialState);
+    });
+
+    test('APPROVE_MAPPING returns state unchanged when mappingProposal is null', () => {
+      const next = appReducer(initialState, { type: 'APPROVE_MAPPING' });
+      expect(next).toEqual(initialState);
+    });
+
+    test('APPROVE_MAPPING does not set canProceedToScoring if a required field mapping is still PROPOSED', () => {
+      const partiallyConfirmedProposal = {
+        ...proposal,
+        mappings: [
+          { sourceColumn: 'App Name', targetField: 'name', confidence: 0.95, aiReasoning: 'Exact match', status: 'PROPOSED', analystOverride: null },
+          { sourceColumn: 'Lifecycle', targetField: 'lifecycle_stage', confidence: 0.90, aiReasoning: 'Lifecycle field', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Support', targetField: 'support_status', confidence: 0.88, aiReasoning: 'Support field', status: 'CONFIRMED', analystOverride: null },
+        ],
+      };
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: partiallyConfirmedProposal });
+      const next = appReducer(withProposal, { type: 'APPROVE_MAPPING' });
+      expect(next.mappingProposal.canProceedToScoring).toBe(false);
+    });
+
+    test('APPROVE_MAPPING sets canProceedToScoring when all required fields are CONFIRMED or CORRECTED', () => {
+      const allRequiredConfirmedProposal = {
+        ...proposal,
+        mappings: [
+          { sourceColumn: 'App Name', targetField: 'name', confidence: 0.95, aiReasoning: 'Exact match', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Lifecycle', targetField: 'lifecycle_stage', confidence: 0.90, aiReasoning: 'Lifecycle field', status: 'CORRECTED', analystOverride: 'lifecycle_stage' },
+          { sourceColumn: 'Support', targetField: 'support_status', confidence: 0.88, aiReasoning: 'Support field', status: 'CONFIRMED', analystOverride: null },
+          { sourceColumn: 'Vendor', targetField: 'vendor', confidence: 0.88, aiReasoning: 'Common vendor field', status: 'PROPOSED', analystOverride: null },
+        ],
+      };
+      const withProposal = appReducer(initialState, { type: 'SET_MAPPING_PROPOSAL', payload: allRequiredConfirmedProposal });
+      const next = appReducer(withProposal, { type: 'APPROVE_MAPPING' });
+      expect(next.mappingProposal.canProceedToScoring).toBe(true);
+    });
+  });
+
   describe('RESET_VALIDATION', () => {
     const withValidated = () => {
       const s1 = appReducer(initialState, {
