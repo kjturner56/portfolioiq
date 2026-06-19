@@ -16,3 +16,5 @@ export const CONFIG = {
     UNKNOWN: 'unknown',
   },
 };
+
+export const REQUIRED_APP_FIELDS = ['name', 'lifecycle_stage', 'support_status'];

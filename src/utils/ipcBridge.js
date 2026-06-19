@@ -1,4 +1,5 @@
 import { validateKey as _validateKey } from './keyValidation';
+import { REQUIRED_APP_FIELDS } from '../constants/config';
 
 const ipcBridge = {
   async validateKey(keyString) {
@@ -28,9 +29,46 @@ const ipcBridge = {
   //
   // NEVER SEND: free text fields, employee names, email addresses,
   // custom notes, or any field not in the above list.
-  // Session 2 enforces this in buildScoringPrompt().
+  // Session 2 enforces permitted field filtering inside scoreApplication().
   async callClaude(_prompt, _options) {
     return { data: null, error: 'Claude API not yet wired — implemented in Session 2.' };
+  },
+
+  async scoreApplication(_appData) {
+    return {
+      data: {
+        disposition: 'Retain',
+        scoring_breakdown: {
+          technical_debt_score: 0,
+          business_value_score: 0,
+          security_posture_score: 0,
+        },
+        uncertainty_flags: {
+          data_conflicts: false,
+          unusual_vendor: false,
+          low_data_quality: false,
+          low_confidence_reason: null,
+          requires_human_review: false,
+        },
+        replacement_suggestions: [],
+        time_classification: 'Invest',
+        confidence: 0,
+        ai_reasoning: 'Phase 1a stub — AI scoring implemented in Session 2.',
+      },
+      error: null,
+    };
+  },
+
+  async mapSchema(headers, _samples) {
+    return {
+      data: {
+        mappings: [],
+        unmappedColumns: headers,
+        unmappedRequiredFields: [...REQUIRED_APP_FIELDS],
+        canProceedToScoring: false,
+      },
+      error: null,
+    };
   },
 
   async saveAnalystConfig(config) {

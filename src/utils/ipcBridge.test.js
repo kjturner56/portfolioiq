@@ -59,3 +59,64 @@ describe('ipcBridge.saveAnalystConfig', () => {
     expect(result.data.path).toBe('analyst_config.json');
   });
 });
+
+describe('ipcBridge.scoreApplication', () => {
+  test('returns { data, error } shape with correct skeleton', async () => {
+    const result = await ipcBridge.scoreApplication({ name: 'Test App' });
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+  });
+
+  test('data.disposition is a string', async () => {
+    const result = await ipcBridge.scoreApplication({});
+    expect(typeof result.data.disposition).toBe('string');
+  });
+
+  test('data.uncertainty_flags.requires_human_review is boolean', async () => {
+    const result = await ipcBridge.scoreApplication({});
+    expect(typeof result.data.uncertainty_flags.requires_human_review).toBe('boolean');
+  });
+
+  test('data.replacement_suggestions is an array', async () => {
+    const result = await ipcBridge.scoreApplication({});
+    expect(Array.isArray(result.data.replacement_suggestions)).toBe(true);
+  });
+
+  test('data.scoring_breakdown has technical_debt_score, business_value_score, security_posture_score', async () => {
+    const result = await ipcBridge.scoreApplication({});
+    const sb = result.data.scoring_breakdown;
+    expect(sb).toHaveProperty('technical_debt_score');
+    expect(sb).toHaveProperty('business_value_score');
+    expect(sb).toHaveProperty('security_posture_score');
+  });
+
+  test('data.confidence is a number', async () => {
+    const result = await ipcBridge.scoreApplication({});
+    expect(typeof result.data.confidence).toBe('number');
+  });
+});
+
+describe('ipcBridge.mapSchema', () => {
+  test('returns { data, error } shape', async () => {
+    const result = await ipcBridge.mapSchema(['App Name', 'Vendor'], []);
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+  });
+
+  test('data.canProceedToScoring is false', async () => {
+    const result = await ipcBridge.mapSchema([], []);
+    expect(result.data.canProceedToScoring).toBe(false);
+  });
+
+  test('data.unmappedColumns contains all passed headers', async () => {
+    const headers = ['App Name', 'Vendor', 'Cost'];
+    const result = await ipcBridge.mapSchema(headers, []);
+    expect(result.data.unmappedColumns).toEqual(headers);
+  });
+
+  test('data.mappings is an empty array', async () => {
+    const result = await ipcBridge.mapSchema(['App Name'], []);
+    expect(Array.isArray(result.data.mappings)).toBe(true);
+    expect(result.data.mappings).toHaveLength(0);
+  });
+});
