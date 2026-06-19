@@ -10,11 +10,6 @@ export const FIELD_REQUIREMENTS = {
     { field: 'active_user_count',   label: 'Active Users',            reason: 'Required for utilization scoring' },
     { field: 'incident_count_12mo', label: 'Incident Count (12mo)',   reason: 'Improves risk scoring' },
   ],
-  OPTIONAL: [
-    { field: 'technical_debt_score',  label: 'Technical Debt Score',  reason: 'Enhances scoring if available' },
-    { field: 'business_value_score',  label: 'Business Value Score',  reason: 'Enhances scoring if available' },
-    { field: 'security_posture_score', label: 'Security Posture Score', reason: 'Enhances risk scoring' },
-  ],
 };
 
 export const CONFIDENCE_DEFINITION = {

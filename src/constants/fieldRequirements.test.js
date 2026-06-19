@@ -16,19 +16,10 @@ describe('FIELD_REQUIREMENTS', () => {
     expect(fields).toContain('incident_count_12mo');
   });
 
-  test('OPTIONAL contains three scoring enhancement fields', () => {
-    const fields = FIELD_REQUIREMENTS.OPTIONAL.map(f => f.field);
-    expect(fields).toContain('technical_debt_score');
-    expect(fields).toContain('business_value_score');
-    expect(fields).toContain('security_posture_score');
-    expect(fields).toHaveLength(3);
-  });
-
   test('every entry has field, label, and reason', () => {
     const all = [
       ...FIELD_REQUIREMENTS.REQUIRED,
       ...FIELD_REQUIREMENTS.RECOMMENDED,
-      ...FIELD_REQUIREMENTS.OPTIONAL,
     ];
     all.forEach(entry => {
       expect(entry.field).toBeTruthy();
