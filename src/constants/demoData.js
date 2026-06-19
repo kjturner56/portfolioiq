@@ -18,7 +18,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-001', name: 'SAP ERP', vendor: 'SAP',
       lifecycle_stage: 'Current', support_status: 'In Support',
-      annual_cost: 840000, active_user_count: 620,
+      annual_cost: 840000, active_user_count: 620, incident_count_12mo: 2,
       ai_disposition: 'Retain', ai_confidence: 0.91,
       technical_debt_score: 18, business_value_score: 88,
       security_posture_score: 15, security_risk_level: 'Low',
@@ -28,7 +28,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-002', name: 'Salesforce CRM', vendor: 'Salesforce',
       lifecycle_stage: 'Current', support_status: 'In Support',
-      annual_cost: 390000, active_user_count: 310,
+      annual_cost: 390000, active_user_count: 310, incident_count_12mo: 3,
       ai_disposition: 'Retain', ai_confidence: 0.88,
       technical_debt_score: 12, business_value_score: 82,
       security_posture_score: 10, security_risk_level: 'Low',
@@ -38,7 +38,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-003', name: 'Microsoft 365', vendor: 'Microsoft',
       lifecycle_stage: 'Current', support_status: 'In Support',
-      annual_cost: 210000, active_user_count: 850,
+      annual_cost: 210000, active_user_count: 850, incident_count_12mo: 1,
       ai_disposition: 'Retain', ai_confidence: 0.95,
       technical_debt_score: 8, business_value_score: 45,
       security_posture_score: 8, security_risk_level: 'Low',
@@ -48,7 +48,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-004', name: 'ServiceNow ITSM', vendor: 'ServiceNow',
       lifecycle_stage: 'Current', support_status: 'In Support',
-      annual_cost: 520000, active_user_count: 180,
+      annual_cost: 520000, active_user_count: 180, incident_count_12mo: 4,
       ai_disposition: 'Retain', ai_confidence: 0.87,
       technical_debt_score: 22, business_value_score: 79,
       security_posture_score: 20, security_risk_level: 'Low',
@@ -58,7 +58,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-005', name: 'Oracle HCM', vendor: 'Oracle',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 310000, active_user_count: 95,
+      annual_cost: 310000, active_user_count: 95, incident_count_12mo: 8,
       ai_disposition: 'Retain', ai_confidence: 0.72,
       technical_debt_score: 42, business_value_score: 38,
       security_posture_score: 35, security_risk_level: 'Medium',
@@ -68,7 +68,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-006', name: 'LegacyDB', vendor: 'Oracle',
       lifecycle_stage: 'End of Life', support_status: 'End of Life',
-      annual_cost: 142000, active_user_count: 12,
+      annual_cost: 142000, active_user_count: 12, incident_count_12mo: 25,
       ai_disposition: 'Retire', ai_confidence: 0.91,
       technical_debt_score: 95, business_value_score: 22,
       security_posture_score: 88, security_risk_level: 'High',
@@ -78,7 +78,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-007', name: 'COBOL Payroll', vendor: 'Custom',
       lifecycle_stage: 'End of Life', support_status: 'Unsupported',
-      annual_cost: 98000, active_user_count: 8,
+      annual_cost: 98000, active_user_count: 8, incident_count_12mo: 18,
       ai_disposition: 'Retire', ai_confidence: 0.89,
       technical_debt_score: 92, business_value_score: 18,
       security_posture_score: 92, security_risk_level: 'High',
@@ -88,7 +88,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-008', name: 'Custom Reporting Portal', vendor: 'Custom',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 45000, active_user_count: 28,
+      annual_cost: 45000, active_user_count: 28, incident_count_12mo: 12,
       ai_disposition: 'Retire', ai_confidence: 0.78,
       technical_debt_score: 68, business_value_score: 30,
       security_posture_score: 55, security_risk_level: 'Medium',
@@ -98,7 +98,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-009', name: 'FTP File Server', vendor: 'Custom',
       lifecycle_stage: 'End of Life', support_status: 'Unsupported',
-      annual_cost: 22000, active_user_count: 15,
+      annual_cost: 22000, active_user_count: 15, incident_count_12mo: 42,
       ai_disposition: 'Retire', ai_confidence: 0.94,
       technical_debt_score: 88, business_value_score: 15,
       security_posture_score: 95, security_risk_level: 'High',
@@ -108,7 +108,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-010', name: 'PeopleSoft HR', vendor: 'Oracle',
       lifecycle_stage: 'End of Life', support_status: 'End of Extended Support',
-      annual_cost: 420000, active_user_count: 240,
+      annual_cost: 420000, active_user_count: 240, incident_count_12mo: 16,
       ai_disposition: 'Modernize', ai_confidence: 0.85,
       technical_debt_score: 74, business_value_score: 72,
       security_posture_score: 70, security_risk_level: 'High',
@@ -118,7 +118,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-011', name: 'Custom Dev Portal', vendor: 'Custom',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 85000, active_user_count: 65,
+      annual_cost: 85000, active_user_count: 65, incident_count_12mo: 11,
       ai_disposition: 'Modernize', ai_confidence: 0.76,
       technical_debt_score: 61, business_value_score: 58,
       security_posture_score: 48, security_risk_level: 'Medium',
@@ -128,7 +128,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-012', name: 'SharePoint 2010', vendor: 'Microsoft',
       lifecycle_stage: 'End of Life', support_status: 'End of Life',
-      annual_cost: 78000, active_user_count: 145,
+      annual_cost: 78000, active_user_count: 145, incident_count_12mo: 14,
       ai_disposition: 'Modernize', ai_confidence: 0.88,
       technical_debt_score: 82, business_value_score: 62,
       security_posture_score: 80, security_risk_level: 'High',
@@ -138,7 +138,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-013', name: 'Custom Analytics Platform', vendor: 'Custom',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 190000, active_user_count: 88,
+      annual_cost: 190000, active_user_count: 88, incident_count_12mo: 13,
       ai_disposition: 'Replace', ai_confidence: 0.82,
       technical_debt_score: 72, business_value_score: 70,
       security_posture_score: 60, security_risk_level: 'Medium',
@@ -148,7 +148,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-014', name: 'Legacy Project Tracker', vendor: 'Custom',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 35000, active_user_count: 42,
+      annual_cost: 35000, active_user_count: 42, incident_count_12mo: 10,
       ai_disposition: 'Replace', ai_confidence: 0.79,
       technical_debt_score: 58, business_value_score: 40,
       security_posture_score: 42, security_risk_level: 'Medium',
@@ -158,7 +158,7 @@ export const DEMO_ENGAGEMENT = {
     {
       id: 'app-015', name: 'Vendor Invoice Portal', vendor: 'Custom',
       lifecycle_stage: 'Aging', support_status: 'In Support',
-      annual_cost: 62000, active_user_count: 55,
+      annual_cost: 62000, active_user_count: 55, incident_count_12mo: 9,
       ai_disposition: 'Replace', ai_confidence: 0.81,
       technical_debt_score: 65, business_value_score: 55,
       security_posture_score: 58, security_risk_level: 'Medium',
