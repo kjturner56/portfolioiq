@@ -64,7 +64,7 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - A buildReportData() function constructs the sanitized payload (implemented in Session 7)
 
 ### AI Schema Mapper
-- When mapping CSV columns, only send column headers and up to 3 sample values per column to the Claude API — never send full column data
+- When mapping CSV columns, the schema mapper (inside window.api.mapSchema(), not in the renderer) must only send column headers and up to 3 sample values per column to the Claude API — never send full column data
 - The schema mapper prompt must never include more than 500 tokens of sample data total
 - The schema mapper must return a PROPOSED mapping only — never an applied mapping
 - Proposed mapping shape:
@@ -99,10 +99,10 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 - Provider is set in analystConfig.aiModel and can be overridden per engagement in engagementConfig
 
 ### AI Scoring
-- buildScoringPrompt() must request a structured scoring_breakdown object — never free text scores
-- buildScoringPrompt() must request structured uncertainty flags — data_conflicts, unusual_vendor, low_data_quality, low_confidence_reason, requires_human_review
-- buildScoringPrompt() must request replacement_suggestions for Retire and Modernize dispositions only — empty array for Retain
-- Claude API responses must be parsed for both scoring_breakdown and uncertainty_flags before being stored in the engagement file
+- The scoring prompt constructor (inside window.api.scoreApplication(), not in the renderer) must request a structured scoring_breakdown object — never free text scores
+- The scoring prompt constructor must request structured uncertainty flags — data_conflicts, unusual_vendor, low_data_quality, low_confidence_reason, requires_human_review
+- The scoring prompt constructor must request replacement_suggestions for Retire and Modernize dispositions only — empty array for Retain
+- Claude API responses must be parsed and validated (via validateScoringResponse()) before being stored in the engagement file — never store a raw, unvalidated AI response
 - Apps with requires_human_review: true must be visually flagged in the HITL validation queue
 - replacement_suggestions are never auto-included in the report — Jan must confirm each one before report generation
 - The replacement suggestion disclaimer must appear wherever suggestions are displayed: 'Replacement suggestions are AI-generated based on general market knowledge as of [analysis date]. They do not constitute a vendor recommendation or endorsement. Independent vendor evaluation is recommended before presenting options to clients.'
