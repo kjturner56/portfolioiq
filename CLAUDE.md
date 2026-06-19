@@ -11,6 +11,13 @@ One React codebase, three deployment targets:
 - Phase 1b: Matt wraps in Electron
 - Phase 2: Web SaaS at app.getportfolioiq.com
 
+## Architecture — Thin Client Boundary
+React (the renderer) contains NO business logic for AI scoring, prompt construction, or response validation. These functions — buildScoringPrompt(), buildMappingPrompt(), validateScoringResponse(), the rule-based pre-filter, retry/timeout/rate-limit logic — live behind the window.api IPC boundary, never in src/utils/ as renderer-callable functions. React calls window.api.scoreApplication(appData) and window.api.mapSchema(headers, samples) and receives a finished, validated result. It never constructs a prompt, never calls Claude directly, and never validates a raw AI response itself.
+
+In Phase 1a, this logic lives in the mocked ipcBridge.js module (still technically JS Claude Code writes, but architecturally treated as 'backend' — not imported by any React component, only called via window.api). In Phase 1b, this same logic moves into the Electron main process with zero changes to any React component. In Phase 2, it can move again to a real backend service with zero changes to any React component. This is why the boundary exists: the client must stay thin enough to swap the entire backend implementation three times without touching React.
+
+Rationale: per architecture review, business logic (scoring rules, prompt templates, validation rules, confidence thresholds) must never live in the renderer, because the renderer is the layer most likely to be rewritten if the front end ever changes. Only UI state, form handling, and display logic belong in React components and src/utils/.
+
 ## Phase 1b — Electron wrapper rules (apply when this phase begins)
 - Vite config must include `base: './'` in vite.config.js before any Electron build — without this, images and assets silently fail to load in the packaged app even though they work fine in npm start.
 - main.js must load the app conditionally: `app.isPackaged ? mainWindow.loadFile(path.join(__dirname, 'index.html')) : mainWindow.loadURL('http://localhost:5173')` — dev loads the Vite server, production loads the built file.
