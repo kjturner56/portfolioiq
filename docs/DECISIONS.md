@@ -35,3 +35,4 @@ Format: [Date] | Decision | Reasoning | Alternatives Considered
 | 2026-06-05 | Scoring weights from engagementConfig | Flexibility without breaking model | Hardcoded weights |
 | 2026-06-05 | Analyst config separate from engagement file | Personal prefs should not travel with client data | Single config file |
 | 2026-06-05 | GitHub Issues over Linear | GitHub MCP integration, zero extra tools | Linear, Notion |
+| 2026-09-28 | GitHub Actions CI — test + build on push to main and every PR; no CD in Phase 1a | Repo already on GitHub, free, no new tools; Phase 1a is local-only so nothing to deploy | CircleCI, no CI |

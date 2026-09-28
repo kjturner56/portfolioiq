@@ -19,6 +19,8 @@ Review before each new session to see if priorities have changed.
 - [ ] Data Quality & Coverage screen — between Mapping Review and AI Scoring; three groups: Fully Scorable / Partially Scorable / Unscorable; coverage table; HITL gate before AI Scoring; uses existing validatePortfolio(); add SHOW_DATA_QUALITY to SCREENS map (GitHub Issue #17, Session 2)
 - [ ] COTS replacement suggestions for Retire and Modernize dispositions — must be in buildScoringPrompt() from Session 2; replacement_suggestions array in scoring response; Jan confirms each before PDF; disclaimer required on every display; never include pricing or support status (GitHub Issue #18, Session 2)
 
+- [ ] **ESLint + lint step in CI** — requires new devDependencies (eslint, react plugins); needs approval per "no new npm packages without asking" rule.
+
 ## Medium Priority (Phase 1b)
 - [ ] **Code signing accounts** — Ken needs to set up an Apple Developer ID and a Windows code signing certificate before Phase 1b packaging can be distributed. This is account/paperwork, not something Claude Code can do. Research cost and timeline.
 - [ ] **AI provider abstraction layer** — src/utils/aiProvider.js routes all AI calls; normalised response shape across providers; Phase 1a Anthropic only; Phase 2 adds OpenAI + Azure OpenAI; provider set in analystConfig.aiModel, overridable per engagement (GitHub Issue #19, design Session 2)
@@ -33,7 +35,10 @@ Review before each new session to see if priorities have changed.
 - [ ] Dev test key rotation before Phase 1b distribution
 - [ ] Auto-save to disk via Electron fs module
 
+- [ ] **Phase 1b CD — Electron release workflow** — GitHub Actions job triggered on a version tag; electron-builder produces macOS/Windows/Linux installers and uploads to GitHub Releases. Blocked on code signing accounts; signing certs stored as GitHub Actions secrets.
+
 ## Low Priority (Phase 2+)
+- [ ] **Phase 2 CD — web deploy** — deploy app.getportfolioiq.com from CI on merge to main; hosting target TBD.
 - [ ] SSO/SAML authentication via Clerk or Auth0
 - [ ] Supabase region selection for EU clients
 - [ ] Penetration test
