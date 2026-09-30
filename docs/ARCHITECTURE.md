@@ -13,7 +13,7 @@ When the code changes, update the baseline line above and the sections affected.
 | Label | Meaning |
 |---|---|
 | **Implemented** | Working code in `src/`, exercised by tests |
-| **Stubbed** | Code exists but returns placeholder data, or has no caller in the running app |
+| **Stubbed** | Code exists but returns placeholder data or provides only a partial implementation of the documented capability |
 | **Documented only** | Described in CLAUDE.md, the pseudocode, BACKLOG.md or GitHub issues; no code yet |
 | **Documented conflict** | Sources disagree; both sides are recorded in [§14](#14-documented-conflicts-and-divergences) |
 
