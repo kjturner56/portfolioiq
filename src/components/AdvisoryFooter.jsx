@@ -17,7 +17,7 @@ export default function AdvisoryFooter() {
         background: COLORS.BG_BASE,
         borderTop: `1px solid ${COLORS.BORDER_SUBTLE}`,
         color: COLORS.TEXT_DISCLAIMER,
-        fontSize: 12,
+        fontSize: 13,
         letterSpacing: 0.2,
         padding: '0 16px',
         textAlign: 'center',
