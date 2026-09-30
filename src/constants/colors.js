@@ -10,6 +10,7 @@ export const COLORS = {
   TEXT_SECONDARY: '#d1d5db',
   TEXT_MUTED:     '#6b7280',
   TEXT_FAINT:     '#4b5563',
+  TEXT_DISCLAIMER: '#7d8594', // 5.3:1 on BG_BASE (WCAG AA) — legal disclaimers, dimmer than body text
   AMBER:          '#f59e0b',
   AMBER_HOVER:    '#fbbf24',
   AMBER_DIM:      '#f59e0b22',
