@@ -23,6 +23,12 @@ test('CONFIG.LOADING_STATES has all four states', () => {
   expect(CONFIG.LOADING_STATES.ERROR).toBe('error');
 });
 
+test('CONFIG.DISCLAIMERS.ADVISORY_FOOTER matches the required legal wording exactly', () => {
+  expect(CONFIG.DISCLAIMERS.ADVISORY_FOOTER).toBe(
+    'AI outputs are recommendations only — analyst validation required before client delivery.'
+  );
+});
+
 test('CONFIG.CONNECTION_STATUS has all three states', () => {
   expect(CONFIG.CONNECTION_STATUS.ONLINE).toBe('online');
   expect(CONFIG.CONNECTION_STATUS.OFFLINE).toBe('offline');

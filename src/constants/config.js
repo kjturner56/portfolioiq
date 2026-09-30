@@ -15,6 +15,10 @@ export const CONFIG = {
     OFFLINE: 'offline',
     UNKNOWN: 'unknown',
   },
+  DISCLAIMERS: {
+    ADVISORY_FOOTER: 'AI outputs are recommendations only — analyst validation required before client delivery.',
+  },
+  FOOTER_HEIGHT: 32, // px — fixed advisory footer; screens get matching bottom padding
 };
 
 export const REQUIRED_APP_FIELDS = ['name', 'lifecycle_stage', 'support_status'];

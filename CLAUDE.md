@@ -123,7 +123,7 @@ All colors from src/constants/colors.js — never hardcode hex in components.
 ## Legal Protection Rules
 
 - Every screen must display a persistent advisory disclaimer in the footer: 'AI outputs are recommendations only — analyst validation required before client delivery.' Use TEXT_FAINT color. Never dismissible.
-- The EULA must be accepted (accepted_eula: true in analystConfig) before Session Start renders. If not accepted, show EULA screen instead.
+- EULA gate (accepted_eula: true in analystConfig before Session Start renders) is deferred until the lawyer-drafted EULA text exists — tracked in Issue #14. It must ship before the first real client engagement. Do not build the EULA screen with placeholder legal text.
 - The Accept action in the Validation Queue must render inline text before the action completes: 'By accepting, you confirm this recommendation reflects your professional judgment.' Not a blocking popup — inline only.
 
 ## Human-in-the-Loop (HITL) Rules
